@@ -1,6 +1,6 @@
 import { HttpPostClient } from '@/data/protocols/http/post-client';
 import { HttpStatusCode } from '@/data/protocols/http/response';
-import { InvalidCredentialsError } from '@/domain/errors/invalid-credentials-error';
+import { InvalidCredentialsError, UnexpectedError } from '@/domain/errors';
 import { Authentication, AuthenticationParams } from '@/domain/usecases/authentication';
 
 export class ApiAuthentication implements Authentication {
@@ -14,6 +14,7 @@ export class ApiAuthentication implements Authentication {
 
 		switch (httpResponse.statusCode) {
 		case HttpStatusCode.unauthorized: throw new InvalidCredentialsError();
+		case HttpStatusCode.badRequest: throw new UnexpectedError();
 		}
 	}
 }
