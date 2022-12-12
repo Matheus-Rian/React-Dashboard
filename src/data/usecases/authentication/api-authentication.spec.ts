@@ -1,9 +1,9 @@
-import { HttpPostClientSpy } from '@/data/tests';
 import { ApiAuthentication } from './api-authentication';
-import { mockAuthentication } from '@/domain/tests/mock-authentication';
-import { InvalidCredentialsError } from '@/domain/errors/invalid-credentials-error';
-import faker from 'faker';
+import { HttpPostClientSpy } from '@/data/tests';
 import { HttpStatusCode } from '@/data/protocols/http/response';
+import { mockAuthentication } from '@/domain/tests/mock-authentication';
+import { InvalidCredentialsError, UnexpectedError } from '@/domain/errors';
+import faker from 'faker';
 
 type SutTypes = {
 	sut: ApiAuthentication,
@@ -42,5 +42,14 @@ describe('ApiAuthentication', () => {
 		};
 		const promise = sut.auth(mockAuthentication());
 		await expect(promise).rejects.toThrow(new InvalidCredentialsError());
+	});
+
+	it('Should throw UnexpectedError if HttpPostClient returns 400', async () => {
+		const { sut, httpPostClientSpy } = makeSut();
+		httpPostClientSpy.response = {
+			statusCode: HttpStatusCode.badRequest
+		};
+		const promise = sut.auth(mockAuthentication());
+		await expect(promise).rejects.toThrow(new UnexpectedError());
 	});
 });
