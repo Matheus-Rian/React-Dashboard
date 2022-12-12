@@ -1,13 +1,5 @@
-import { HttpPostClient } from '@/data/protocols/http/post-client';
+import { HttpClientSpy } from '@/data/tests';
 import { ApiAuthentication } from './api-authentication';
-
-class HttpClientSpy implements HttpPostClient {
-	url?: string;
-
-	async post(url: string): Promise<void> {
-		this.url = url;
-	}
-}
 
 describe('ApiAuthentication', () => {
 	it('Should call HttpClient with correct URL', () => {
