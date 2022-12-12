@@ -9,7 +9,7 @@ export class ApiAuthentication implements Authentication {
 	) {}
 
 	async auth(): Promise<AccountModel> {
-		await this.httpPostClient.post(this.url);
+		await this.httpPostClient.post({ url: this.url });
 		return { } as AccountModel;
 	}
 }
