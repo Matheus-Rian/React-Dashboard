@@ -1,17 +1,19 @@
 import { ApiAuthentication } from './api-authentication';
 import { HttpPostClientSpy } from '@/data/tests';
 import { HttpStatusCode } from '@/data/protocols/http/response';
-import { mockAuthentication } from '@/domain/tests/mock-authentication';
+import { mockAccount, mockAuthentication } from '@/domain/tests/mock-authentication';
 import { InvalidCredentialsError, UnexpectedError } from '@/domain/errors';
 import faker from 'faker';
+import { AuthenticationParams } from '@/domain/usecases/authentication';
+import { AccountModel } from '@/domain/models';
 
 type SutTypes = {
 	sut: ApiAuthentication,
-	httpPostClientSpy: HttpPostClientSpy
+	httpPostClientSpy: HttpPostClientSpy<AuthenticationParams, AccountModel>
 }
 
 const makeSut = (url: string = faker.internet.url()): SutTypes => {
-	const httpPostClientSpy = new HttpPostClientSpy();
+	const httpPostClientSpy = new HttpPostClientSpy<AuthenticationParams, AccountModel>();
 	const sut = new ApiAuthentication(url, httpPostClientSpy);
 
 	return {
@@ -69,5 +71,17 @@ describe('ApiAuthentication', () => {
 		};
 		const promise = sut.auth(mockAuthentication());
 		await expect(promise).rejects.toThrow(new UnexpectedError());
+	});
+
+
+	it('Should return AccountModel if HttpPostClient returns 200', async () => {
+		const { sut, httpPostClientSpy } = makeSut();
+		const httpResult = mockAccount();
+		httpPostClientSpy.response = {
+			statusCode: HttpStatusCode.ok,
+			body: httpResult
+		};
+		const account = await sut.auth(mockAuthentication());
+		expect(account).toBe(httpResult);
 	});
 });
