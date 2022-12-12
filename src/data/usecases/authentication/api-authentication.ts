@@ -8,8 +8,8 @@ export class ApiAuthentication implements Authentication {
 		private readonly httpPostClient: HttpPostClient
 	) {}
 
-	async auth(): Promise<AccountModel> {
-		await this.httpPostClient.post({ url: this.url });
+	async auth(params: AuthenticationParams): Promise<AccountModel> {
+		await this.httpPostClient.post({ url: this.url, body: params });
 		return { } as AccountModel;
 	}
 }
