@@ -1,5 +1,6 @@
 import { HttpPostClient } from '@/data/protocols/http/post-client';
-import { AccountModel } from '@/domain/models';
+import { HttpStatusCode } from '@/data/protocols/http/response';
+import { InvalidCredentialsError } from '@/domain/errors/invalid-credentials-error';
 import { Authentication, AuthenticationParams } from '@/domain/usecases/authentication';
 
 export class ApiAuthentication implements Authentication {
@@ -8,8 +9,11 @@ export class ApiAuthentication implements Authentication {
 		private readonly httpPostClient: HttpPostClient
 	) {}
 
-	async auth(params: AuthenticationParams): Promise<AccountModel> {
-		await this.httpPostClient.post({ url: this.url, body: params });
-		return { } as AccountModel;
+	async auth(params: AuthenticationParams): Promise<void> {
+		const httpResponse = await this.httpPostClient.post({ url: this.url, body: params });
+
+		switch (httpResponse.statusCode) {
+		case HttpStatusCode.unauthorized: throw new InvalidCredentialsError();
+		}
 	}
 }
