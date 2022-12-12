@@ -1,5 +1,6 @@
 import { HttpPostClientSpy } from '@/data/tests';
 import { ApiAuthentication } from './api-authentication';
+import faker from 'faker';
 
 type SutTypes = {
 	sut: ApiAuthentication,
@@ -18,7 +19,7 @@ const makeSut = (url: string): SutTypes => {
 
 describe('ApiAuthentication', () => {
 	it('Should call HttpClient with correct URL', async () => {
-		const url = 'any_url';
+		const url = faker.internet.url();
 		const { sut, httpPostClientSpy } = makeSut(url);
 		await sut.auth();
 		expect(httpPostClientSpy.url).toBe(url);
