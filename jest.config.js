@@ -1,10 +1,11 @@
+/* eslint-disable */
 module.exports = {
 	roots: ['<rootDir>/src'],
 	collectCoverageFrom: [
 		'<rootDir>/src/**/*.{ts,tsx}',
-		// '!<rootDir>/src/main/**/*',
+		'!<rootDir>/src/main/**/*',
 		'!<rootDir>/src/**/index.ts',
-		// '!**/*.d.ts'
+		'!**/*.d.ts'
 	],
 	coverageDirectory: 'coverage',
 	testEnvironment: 'jsdom',
