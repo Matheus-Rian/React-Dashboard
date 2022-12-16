@@ -1,0 +1,19 @@
+
+.loginContainer {
+	max-width: 894px;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	margin: 0 auto;
+	background-color: #fff;
+
+	.formContainer {
+		width: 400px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+}
