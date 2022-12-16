@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpPostClient, HttpPostParams } from '@/data/protocols/http/post-client';
 import { HttpResponse, HttpStatusCode } from '@/data/protocols/http/response';
 import faker from 'faker';
