@@ -1,22 +1,18 @@
 import { Login } from '.';
-import { Helper, ValidationStub } from '@/presentation/tests';
-import { cleanup, render, RenderResult, fireEvent } from '@testing-library/react';
+import { AuthenticationSpy, Helper, ValidationStub } from '@/presentation/tests';
+import { cleanup, render, RenderResult, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import faker from 'faker';
-import { Authentication, AuthenticationParams } from '@/domain/usecases/authentication';
-import { AccountModel } from '@/domain/models';
-import { mockAccount } from '@/domain/tests/mock-authentication';
 
-class AuthenticationSpy implements Authentication {
-	params: AuthenticationParams;
-	account = mockAccount();
-
-	async auth(params: AuthenticationParams): Promise<AccountModel> {
-		this.params = params;
-		return Promise.resolve(this.account);
-	}
-
-}
+const simulateValidSubmit = async (
+	sut: RenderResult
+) => {
+	Helper.populateField(sut, 'email', faker.internet.email());
+	Helper.populateField(sut, 'password', faker.internet.password());
+	const form = sut.getByTestId('form');
+	fireEvent.submit(form);
+	await waitFor(() => form);
+};
 
 type SutTypes = {
 	sut: RenderResult
@@ -86,5 +82,13 @@ describe('Login Page', () => {
 			email,
 			password
 		});
+	});
+
+	it('Should call authentication only once', () => {
+		const { sut, authenticationSpy } = makeSut();
+		simulateValidSubmit(sut);
+		simulateValidSubmit(sut);
+
+		expect(authenticationSpy.callsCount).toBe(1);
 	});
 });
