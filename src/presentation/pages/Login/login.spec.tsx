@@ -1,6 +1,6 @@
 import { Login } from '.';
 import { ValidationSpy } from '@/presentation/tests';
-import { fireEvent, render, RenderResult } from '@testing-library/react';
+import { cleanup, fireEvent, render, RenderResult } from '@testing-library/react';
 import React from 'react';
 import faker from 'faker';
 
@@ -10,6 +10,7 @@ type SutTypes = {
 }
 const makeSut = (): SutTypes => {
 	const validationSpy = new ValidationSpy();
+	validationSpy.error = true;
 	const sut = render(<Login validation={validationSpy} />);
 	return {
 		sut,
@@ -18,13 +19,13 @@ const makeSut = (): SutTypes => {
 };
 
 describe('Login Page', () => {
+	afterEach(cleanup);
+
 	it('Should start with initial State', () => {
 		const { sut } = makeSut();
 		const progress = sut.queryByTestId('progress');
 		const button = sut.getByRole('button') as HTMLButtonElement;
-		const errorsMessage = sut.queryAllByTestId('errorMessage');
 
-		expect(errorsMessage).toHaveLength(0);
 		expect(progress).toBeFalsy();
 		expect(button.disabled).toBe(true);
 	});
@@ -44,8 +45,16 @@ describe('Login Page', () => {
 		const inputPassword = sut.getByTestId('password-input');
 		const password = faker.internet.password();
 		fireEvent.input(inputPassword, { target: { value: password } });
-
 		expect(validationSpy.fieldName).toBe('password');
 		expect(validationSpy.fieldValue).toBe(password);
+		console.log(validationSpy);
+	});
+
+	it('Should call email error if Validation fails', () => {
+		const { sut } = makeSut();
+		const inputEmail = sut.getByTestId('email-input');
+		fireEvent.input(inputEmail, { target: { value: faker.internet.email() } });
+		const emailError = sut.getByTestId('emailError');
+		expect(emailError).toBeTruthy();
 	});
 });
