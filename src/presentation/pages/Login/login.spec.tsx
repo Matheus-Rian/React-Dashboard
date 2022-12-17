@@ -1,5 +1,5 @@
 import { Login } from '.';
-import { ValidationStub } from '@/presentation/tests';
+import { Helper, ValidationStub } from '@/presentation/tests';
 import { cleanup, fireEvent, render, RenderResult } from '@testing-library/react';
 import React from 'react';
 import faker from 'faker';
@@ -8,11 +8,6 @@ type SutTypes = {
 	sut: RenderResult
 	validationStub: ValidationStub
 }
-
-const testStatusForInput = (sut: RenderResult, field: string, validationError = ''): void => {
-	const error = sut.getByTestId(`${field}Error`);
-	expect(error.getAttribute('data-status')).toBe(validationError ? 'invalid' : 'valid');
-};
 
 const makeSut = (validationError = ''): SutTypes => {
 	const validationStub = new ValidationStub();
@@ -28,7 +23,8 @@ describe('Login Page', () => {
 	afterEach(cleanup);
 
 	it('Should start with initial State', () => {
-		const { sut } = makeSut();
+		const validationError = faker.random.words();
+		const { sut } = makeSut(validationError);
 		const progress = sut.queryByTestId('progress');
 		const button = sut.getByRole('button') as HTMLButtonElement;
 
@@ -39,12 +35,23 @@ describe('Login Page', () => {
 	it('Should call email error if Validation fails', () => {
 		const validationError = faker.random.words();
 		const { sut } = makeSut(validationError);
-		testStatusForInput(sut, 'email', validationError);
+		Helper.testStatusForInput(sut, 'email', validationError);
 	});
 
 	it('Should call password error if Validation fails', () => {
 		const validationError = faker.random.words();
 		const { sut } = makeSut(validationError);
-		testStatusForInput(sut, 'password', validationError);
+		Helper.testStatusForInput(sut, 'password', validationError);
+	});
+
+	it('Should enable submit button if form is valid', () => {
+		const { sut } = makeSut();
+		const inputEmail = sut.getByTestId('email');
+		fireEvent.input(inputEmail, { target: { value: faker.internet.email() }});
+		const inputPassword = sut.getByTestId('password');
+		fireEvent.input(inputPassword, { target: { value: faker.internet.password() }});
+		const button = sut.getByRole('button') as HTMLButtonElement;
+
+		expect(button.disabled).toBe(false);
 	});
 });
