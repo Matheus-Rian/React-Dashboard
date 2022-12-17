@@ -15,7 +15,8 @@ export const Login: React.FC<Props> = ({ validation }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [state, setState] = useState({
 		email: '',
-		password: ''
+		password: '',
+		emailError: false
 	});
 	const [isError, setIsError] = useState(false);
 
@@ -25,7 +26,10 @@ export const Login: React.FC<Props> = ({ validation }) => {
 	}
 
 	useEffect(() => {
-		validation.validate('email', state.email);
+		setState({
+			...state,
+			emailError: validation.validate('email', state.email)
+		});
 	}, [state.email]);
 
 	useEffect(() => {
@@ -51,14 +55,18 @@ export const Login: React.FC<Props> = ({ validation }) => {
 								placeholder='Digite seu e-mail'
 								type='email'
 							/>
-							<FormErrorMessage as='span' data-testid='errorMessage'>Email is required.</FormErrorMessage>
+							{ state.emailError &&
+								<span data-testid='emailError'>
+									<FormErrorMessage>Email is required.</FormErrorMessage>
+								</span>
+							}
 							<FormLabel mt='40px' ml='12px' fontWeight='normal'>Senha</FormLabel>
 							<InputCustom
 								name='password'
 								placeholder='Digite sua senha'
 								type='password'
 							/>
-							<FormErrorMessage as='span' data-testid='errorMessage'>Password is required.</FormErrorMessage>
+							<FormErrorMessage as='span' data-testid='passwordError'>Password is required.</FormErrorMessage>
 						</FormControl>
 
 						<ButtonCustom type='submit' disabled>
