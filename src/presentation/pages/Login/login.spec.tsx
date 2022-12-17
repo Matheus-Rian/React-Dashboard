@@ -8,9 +8,15 @@ type SutTypes = {
 	sut: RenderResult
 	validationStub: ValidationStub
 }
-const makeSut = (): SutTypes => {
+
+const testStatusForInput = (sut: RenderResult, field: string, validationError = ''): void => {
+	const error = sut.getByTestId(`${field}Error`);
+	expect(error.getAttribute('data-status')).toBe(validationError ? 'invalid' : 'valid');
+};
+
+const makeSut = (validationError = ''): SutTypes => {
 	const validationStub = new ValidationStub();
-	validationStub.error = true;
+	validationStub.error = validationError;
 	const sut = render(<Login validation={validationStub} />);
 	return {
 		sut,
@@ -19,6 +25,8 @@ const makeSut = (): SutTypes => {
 };
 
 describe('Login Page', () => {
+	afterEach(cleanup);
+
 	it('Should start with initial State', () => {
 		const { sut } = makeSut();
 		const progress = sut.queryByTestId('progress');
@@ -29,19 +37,14 @@ describe('Login Page', () => {
 	});
 
 	it('Should call email error if Validation fails', () => {
-		const { sut } = makeSut();
-		const inputEmail = sut.getByTestId('email-input');
-		fireEvent.input(inputEmail, { target: { value: faker.internet.email() } });
-		const emailError = sut.getByTestId('emailError');
-		expect(emailError).toBeTruthy();
+		const validationError = faker.random.words();
+		const { sut } = makeSut(validationError);
+		testStatusForInput(sut, 'email', validationError);
 	});
 
 	it('Should call password error if Validation fails', () => {
-		const { sut } = makeSut();
-		const inputPassword = sut.getByTestId('password-input');
-
-		fireEvent.input(inputPassword, { target: { value: faker.internet.password() } });
-		const passwordError = sut.getByTestId('passwordError');
-		expect(passwordError).toBeTruthy();
+		const validationError = faker.random.words();
+		const { sut } = makeSut(validationError);
+		testStatusForInput(sut, 'password', validationError);
 	});
 });

@@ -1,9 +1,9 @@
 import { Validation } from '../protocols/validation';
 
 export class ValidationStub implements Validation {
-	error = false;
+	error = '';
 
-	validate(fieldName: string, fieldValue: string): boolean {
+	validate(fieldName: string, fieldValue: string): string {
 		return this.error;
 	}
 }

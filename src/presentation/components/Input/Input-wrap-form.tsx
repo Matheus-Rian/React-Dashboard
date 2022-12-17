@@ -1,7 +1,7 @@
 import { FormLabel, FormErrorMessage } from '@chakra-ui/react';
 import { InputCustom } from './Input-custom';
-import React, { useContext } from 'react';
 import { FormContext } from '@/presentation/contexts';
+import React, { useContext } from 'react';
 
 type Props = {
 	nameLabel: string,
@@ -25,11 +25,15 @@ export const InputWrapForm: React.FC<Props> = ({ input, nameLabel, messageError 
 				placeholder={input.placeholder || ''}
 				type={input.type || 'text'}
 			/>
-			{ state[errorName] &&
-				<span data-testid={errorName}>
-					<FormErrorMessage>{messageError}</FormErrorMessage>
-				</span>
-			}
+			<span
+				data-testid={errorName}
+				data-status={state[errorName] ? 'invalid' : 'valid'}
+				title={state[errorName]}
+			>
+				{ state[errorName] &&
+					<FormErrorMessage>{state[errorName]}</FormErrorMessage>
+				}
+			</span>
 		</>
 	);
 };

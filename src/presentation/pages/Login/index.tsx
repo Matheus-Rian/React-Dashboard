@@ -16,8 +16,8 @@ export const Login: React.FC<Props> = ({ validation }) => {
 	const [state, setState] = useState({
 		email: '',
 		password: '',
-		emailError: false,
-		passwordError: false
+		emailError: '',
+		passwordError: ''
 	});
 	const [isError, setIsError] = useState(false);
 
