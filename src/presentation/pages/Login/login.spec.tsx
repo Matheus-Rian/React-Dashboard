@@ -91,4 +91,14 @@ describe('Login Page', () => {
 
 		expect(authenticationSpy.callsCount).toBe(1);
 	});
+
+	it('Should not call authentication if form is invalid', () => {
+		const validationError = faker.random.words();
+		const { sut, authenticationSpy } = makeSut(validationError);
+		const form = sut.getByTestId('form');
+		Helper.populateField(sut, 'email');
+		fireEvent.submit(form);
+
+		expect(authenticationSpy.callsCount).toBe(0);
+	});
 });
