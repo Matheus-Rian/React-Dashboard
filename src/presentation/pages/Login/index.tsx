@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import Styles from './styles.scss';
 
 export const Login: React.FC = () => {
-	console.log('Renderizou');
+	const [isLoading, setIsLoading] = useState(false);
 	const [state, setState] = useState({
 		email: '',
 		password: ''
@@ -44,20 +44,22 @@ export const Login: React.FC = () => {
 								placeholder='Digite seu e-mail'
 								type='email'
 							/>
-							<FormErrorMessage as='span'>Email is required.</FormErrorMessage>
+							<FormErrorMessage as='span' data-testid='errorMessage'>Email is required.</FormErrorMessage>
 							<FormLabel mt='40px' ml='12px' fontWeight='normal'>Senha</FormLabel>
 							<InputCustom
 								name='password'
 								placeholder='Digite sua senha'
 								type='password'
 							/>
-							<FormErrorMessage as='span'>Password is required.</FormErrorMessage>
+							<FormErrorMessage as='span' data-testid='errorMessage'>Password is required.</FormErrorMessage>
 						</FormControl>
 
-						<ButtonCustom type='submit'>
+						<ButtonCustom type='submit' disabled>
 							Entrar
 						</ButtonCustom>
-						{/* <CircularProgress isIndeterminate color='purple.300' /> */}
+						{isLoading &&
+							<CircularProgress data-testid='progress' isIndeterminate color='purple.300' />
+						}
 					</form>
 				</FormContext.Provider>
 			</Flex>
