@@ -8,7 +8,7 @@ export const InputCustom: React.FC<InputProps> = (props: InputProps) => {
 	return (
 		<Input
 			{...props}
-			data-testid={`${props.name}-input`}
+			data-testid={props.name}
 			variant='filled'
 			maxW ='100%'
 			h='60px'
