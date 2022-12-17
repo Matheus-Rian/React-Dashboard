@@ -5,8 +5,13 @@ import { Logo } from '@/presentation/icons/logo';
 import { Flex, FormControl, FormLabel, FormErrorMessage, CircularProgress } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import Styles from './styles.scss';
+import { Validation } from '../../protocols/validation';
 
-export const Login: React.FC = () => {
+type Props = {
+	validation: Validation
+}
+
+export const Login: React.FC<Props> = ({ validation }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [state, setState] = useState({
 		email: '',
@@ -20,10 +25,8 @@ export const Login: React.FC = () => {
 	}
 
 	useEffect(() => {
-		console.log('executei useffect');
-		console.log(setState);
-		setState({ ...state });
-	}, [state.email, state.password]);
+		validation.validate({ email: state.email });
+	}, [state.email]);
 
 	return (
 		<div className={Styles.loginContainer}>
