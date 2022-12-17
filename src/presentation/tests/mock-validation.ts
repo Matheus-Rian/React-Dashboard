@@ -1,13 +1,13 @@
 import { Validation } from '../protocols/validation';
 
 export class ValidationSpy implements Validation {
-	errorMessage: string;
+	error = false;
 	fieldName: string;
 	fieldValue: string;
 
-	validate(fieldName: string, fieldValue: string): string {
+	validate(fieldName: string, fieldValue: string): boolean {
 		this.fieldName = fieldName;
 		this.fieldValue = fieldValue;
-		return this.errorMessage;
+		return this.error;
 	}
 }
