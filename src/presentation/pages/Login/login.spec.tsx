@@ -38,13 +38,22 @@ describe('Login Page', () => {
 		expect(button.disabled).toBe(true);
 	});
 
-	it('Should call Validation with correct value', () => {
+	it('Should call Validation with correct email', () => {
 		const { sut, validationSpy } = makeSut();
 		const inputEmail = sut.getByTestId('email-input');
 		fireEvent.input(inputEmail, { target: { value: 'any_email'} });
-		expect(inputEmail).toBeTruthy();
 		expect(validationSpy.input).toEqual({
 			email: 'any_email'
+		});
+	});
+
+	it('Should call Validation with correct password', () => {
+		const { sut, validationSpy } = makeSut();
+		const inputPassword = sut.getByTestId('password-input');
+		fireEvent.input(inputPassword, { target: { value: 'any_password'} });
+		expect(inputPassword).toBeTruthy();
+		expect(validationSpy.input).toEqual({
+			password: 'any_password'
 		});
 	});
 });
