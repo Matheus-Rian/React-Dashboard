@@ -25,7 +25,7 @@ export const Login: React.FC<Props> = ({ validation, authentication }) => {
 	const isFormInvalid = Boolean(state.emailError || state.passwordError);
 	async function handleSubmitData(event: React.FormEvent<HTMLFormElement>): Promise<void> {
 		event.preventDefault();
-		if (state.isLoading) return;
+		if (state.isLoading || isFormInvalid) return;
 		setState({ ...state, isLoading: true });
 		await authentication.auth({ email: state.email, password: state.password });
 	}
