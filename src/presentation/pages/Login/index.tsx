@@ -6,25 +6,27 @@ import { Flex, FormControl, CircularProgress } from '@chakra-ui/react';
 import { Validation } from '../../protocols/validation';
 import React, { useEffect, useState } from 'react';
 import Styles from './styles.scss';
+import { Authentication } from '../../../domain/usecases/authentication';
 
 type Props = {
 	validation: Validation
+	authentication: Authentication
 }
 
-export const Login: React.FC<Props> = ({ validation }) => {
-	const [isLoading, setIsLoading] = useState(false);
+export const Login: React.FC<Props> = ({ validation, authentication }) => {
 	const [state, setState] = useState({
 		email: '',
 		password: '',
 		emailError: '',
-		passwordError: ''
+		passwordError: '',
+		isLoading: false
 	});
-	const [isError, setIsError] = useState(false);
 
 	const isFormInvalid = Boolean(state.emailError || state.passwordError);
 	async function handleSubmitData(event: React.FormEvent<HTMLFormElement>): Promise<void> {
 		event.preventDefault();
-		setIsError(!isError);
+		setState({ ...state, isLoading: true });
+		await authentication.auth({ email: state.email, password: state.password });
 	}
 
 	useEffect(() => {
@@ -47,7 +49,7 @@ export const Login: React.FC<Props> = ({ validation }) => {
 
 				<FormContext.Provider value={{ state, setState }}>
 					<form className={Styles.formContainer} onSubmit={handleSubmitData}>
-						<FormControl isInvalid={isError}>
+						<FormControl>
 							<InputWrapForm
 								nameLabel='E-mail'
 								input={{
@@ -68,11 +70,13 @@ export const Login: React.FC<Props> = ({ validation }) => {
 							/>
 						</FormControl>
 
-						<ButtonCustom type='submit' disabled={isFormInvalid}>
-							Entrar
-						</ButtonCustom>
-						{isLoading &&
-							<CircularProgress data-testid='progress' isIndeterminate color='purple.300' />
+						{state.isLoading
+							? <CircularProgress data-testid='progress' isIndeterminate color='purple.300' />
+							: (
+								<ButtonCustom type='submit' disabled={isFormInvalid}>
+									Entrar
+								</ButtonCustom>
+							)
 						}
 					</form>
 				</FormContext.Provider>
