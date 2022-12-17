@@ -25,6 +25,7 @@ export const Login: React.FC<Props> = ({ validation, authentication }) => {
 	const isFormInvalid = Boolean(state.emailError || state.passwordError);
 	async function handleSubmitData(event: React.FormEvent<HTMLFormElement>): Promise<void> {
 		event.preventDefault();
+		if (state.isLoading) return;
 		setState({ ...state, isLoading: true });
 		await authentication.auth({ email: state.email, password: state.password });
 	}
@@ -48,7 +49,7 @@ export const Login: React.FC<Props> = ({ validation, authentication }) => {
 				</Flex>
 
 				<FormContext.Provider value={{ state, setState }}>
-					<form className={Styles.formContainer} onSubmit={handleSubmitData}>
+					<form data-testid='form' className={Styles.formContainer} onSubmit={handleSubmitData}>
 						<FormControl>
 							<InputWrapForm
 								nameLabel='E-mail'
