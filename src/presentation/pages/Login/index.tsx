@@ -28,6 +28,10 @@ export const Login: React.FC<Props> = ({ validation }) => {
 		validation.validate({ email: state.email });
 	}, [state.email]);
 
+	useEffect(() => {
+		validation.validate({ password: state.password });
+	}, [state.password]);
+
 	return (
 		<div className={Styles.loginContainer}>
 			<Flex direction='column' align='center' maxW='800px'>
