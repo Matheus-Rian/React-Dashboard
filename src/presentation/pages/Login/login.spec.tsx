@@ -1,16 +1,31 @@
-import { render, RenderResult } from '@testing-library/react';
+import { fireEvent, render, RenderResult } from '@testing-library/react';
 import { Login } from '.';
 import React from 'react';
+import { Validation } from '@/presentation/protocols/validation';
 
 type SutTypes = {
 	sut: RenderResult
+	validationSpy: ValidationSpy
 }
 const makeSut = (): SutTypes => {
-	const sut = render(<Login />);
+	const validationSpy = new ValidationSpy();
+	const sut = render(<Login validation={validationSpy} />);
 	return {
-		sut
+		sut,
+		validationSpy
 	};
 };
+
+class ValidationSpy implements Validation {
+	errorMessage: string;
+	input: Record<string, unknown>;
+
+	validate(input: Record<string, unknown>): string {
+		this.input = input;
+		return this.errorMessage;
+	}
+
+}
 
 describe('Login Page', () => {
 	it('Should start with initial State', () => {
@@ -21,5 +36,15 @@ describe('Login Page', () => {
 		expect(errorsMessage).toHaveLength(0);
 		expect(progress).toBeFalsy();
 		expect(button.disabled).toBe(true);
+	});
+
+	it('Should call Validation with correct value', () => {
+		const { sut, validationSpy } = makeSut();
+		const inputEmail = sut.getByTestId('email-input');
+		fireEvent.input(inputEmail, { target: { value: 'any_email'} });
+		expect(inputEmail).toBeTruthy();
+		expect(validationSpy.input).toEqual({
+			email: 'any_email'
+		});
 	});
 });
