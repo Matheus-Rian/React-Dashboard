@@ -3,6 +3,7 @@ import { AuthenticationSpy, Helper, ValidationStub } from '@/presentation/tests'
 import { cleanup, render, RenderResult, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import faker from 'faker';
+import { InvalidCredentialsError } from '@/domain/errors';
 
 const simulateValidSubmit = async (
 	sut: RenderResult
@@ -59,15 +60,12 @@ describe('Login Page', () => {
 		Helper.testButtonIsDisabled(sut, false);
 	});
 
-	// it('Should show progress on submit', () => {
-	// 	const { sut } = makeSut();
-	// 	Helper.populateField(sut, 'email');
-	// 	Helper.populateField(sut, 'password');
-	// 	const button = sut.getByRole('button');
-	// 	fireEvent.click(button);
-	// 	// expect(button).toBeFalsy();
-	// 	Helper.testElementExists(sut, 'progress').toBeTruthy();
-	// });
+	it('Should show progress on submit', async () => {
+		const { sut } = makeSut();
+		simulateValidSubmit(sut);
+		await sut.findByTestId('progress');
+		Helper.testElementExists(sut, 'progress').toBeTruthy();
+	});
 
 	it('Should call authentication with correct values', () => {
 		const { sut, authenticationSpy } = makeSut();
@@ -100,5 +98,16 @@ describe('Login Page', () => {
 		fireEvent.submit(form);
 
 		expect(authenticationSpy.callsCount).toBe(0);
+	});
+
+	it('Should present error if authentication fails', async () => {
+		const { sut, authenticationSpy } = makeSut();
+		const error = new InvalidCredentialsError();
+		jest.spyOn(authenticationSpy, 'auth').mockReturnValueOnce(Promise.reject(error));
+		simulateValidSubmit(sut);
+		await sut.findByText(error.message);
+		const mainError = sut.getByTestId('main-error');
+
+		expect(mainError.textContent).toBe(error.message);
 	});
 });
