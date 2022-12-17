@@ -1,7 +1,7 @@
-import { fireEvent, render, RenderResult } from '@testing-library/react';
 import { Login } from '.';
+import { ValidationSpy } from '@/presentation/tests';
+import { fireEvent, render, RenderResult } from '@testing-library/react';
 import React from 'react';
-import { Validation } from '@/presentation/protocols/validation';
 
 type SutTypes = {
 	sut: RenderResult
@@ -15,19 +15,6 @@ const makeSut = (): SutTypes => {
 		validationSpy
 	};
 };
-
-class ValidationSpy implements Validation {
-	errorMessage: string;
-	fieldName: string;
-	fieldValue: string;
-
-	validate(fieldName: string, fieldValue: string): string {
-		this.fieldName = fieldName;
-		this.fieldValue = fieldValue;
-		return this.errorMessage;
-	}
-
-}
 
 describe('Login Page', () => {
 	it('Should start with initial State', () => {
