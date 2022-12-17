@@ -1,11 +1,11 @@
 
-import { ButtonCustom, HeadingCustom,InputCustom } from '@/presentation/components';
+import { ButtonCustom, HeadingCustom, InputWrapForm } from '@/presentation/components';
 import { FormContext } from '@/presentation/contexts';
 import { Logo } from '@/presentation/icons/logo';
-import { Flex, FormControl, FormLabel, FormErrorMessage, CircularProgress } from '@chakra-ui/react';
+import { Flex, FormControl, CircularProgress } from '@chakra-ui/react';
+import { Validation } from '../../protocols/validation';
 import React, { useEffect, useState } from 'react';
 import Styles from './styles.scss';
-import { Validation } from '../../protocols/validation';
 
 type Props = {
 	validation: Validation
@@ -47,28 +47,24 @@ export const Login: React.FC<Props> = ({ validation }) => {
 				<FormContext.Provider value={{ state, setState }}>
 					<form className={Styles.formContainer} onSubmit={handleSubmitData}>
 						<FormControl isInvalid={isError}>
-							<FormLabel fontWeight='normal' ml='12px'>E-mail</FormLabel>
-							<InputCustom
-								name='email'
-								placeholder='Digite seu e-mail'
-								type='email'
+							<InputWrapForm
+								nameLabel='E-mail'
+								input={{
+									name: 'email',
+									placeholder: 'Digite seu e-mail',
+									type: 'email'
+								}}
+								messageError='Email is required.'
 							/>
-							{ state.emailError &&
-								<span data-testid='emailError'>
-									<FormErrorMessage>Email is required.</FormErrorMessage>
-								</span>
-							}
-							<FormLabel mt='40px' ml='12px' fontWeight='normal'>Senha</FormLabel>
-							<InputCustom
-								name='password'
-								placeholder='Digite sua senha'
-								type='password'
+							<InputWrapForm
+								nameLabel='Senha'
+								input={{
+									name: 'password',
+									placeholder: 'Digite sua senha',
+									type: 'password'
+								}}
+								messageError='Password is required.'
 							/>
-							{ state.passwordError &&
-								<span data-testid='passwordError'>
-									<FormErrorMessage as='span' data-testid='passwordError'>Password is required.</FormErrorMessage>
-								</span>
-							}
 						</FormControl>
 
 						<ButtonCustom type='submit' disabled>
