@@ -21,6 +21,7 @@ export const Login: React.FC<Props> = ({ validation }) => {
 	});
 	const [isError, setIsError] = useState(false);
 
+	const isFormInvalid = Boolean(state.emailError || state.passwordError);
 	async function handleSubmitData(event: React.FormEvent<HTMLFormElement>): Promise<void> {
 		event.preventDefault();
 		setIsError(!isError);
@@ -67,7 +68,7 @@ export const Login: React.FC<Props> = ({ validation }) => {
 							/>
 						</FormControl>
 
-						<ButtonCustom type='submit' disabled>
+						<ButtonCustom type='submit' disabled={isFormInvalid}>
 							Entrar
 						</ButtonCustom>
 						{isLoading &&
