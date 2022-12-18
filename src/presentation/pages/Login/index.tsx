@@ -1,12 +1,13 @@
 
 import { ButtonCustom, HeadingCustom, InputWrapForm } from '@/presentation/components';
-import { FormContext } from '@/presentation/contexts';
+import { AccountContext, FormContext } from '@/presentation/contexts';
 import { Logo } from '@/presentation/icons/logo';
 import { Flex, FormControl, CircularProgress } from '@chakra-ui/react';
 import { Validation } from '../../protocols/validation';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Styles from './styles.scss';
 import { Authentication } from '../../../domain/usecases/authentication';
+import { useHistory } from 'react-router-dom';
 
 type Props = {
 	validation: Validation
@@ -14,6 +15,8 @@ type Props = {
 }
 
 export const Login: React.FC<Props> = ({ validation, authentication }) => {
+	const history = useHistory();
+	const { setCurrentAccount } = useContext(AccountContext);
 	const [state, setState] = useState({
 		email: '',
 		password: '',
@@ -29,7 +32,11 @@ export const Login: React.FC<Props> = ({ validation, authentication }) => {
 		try {
 			if (state.isLoading || isFormInvalid) return;
 			setState({ ...state, isLoading: true });
-			await authentication.auth({ email: state.email, password: state.password });
+			const account = await authentication.auth(
+				{ email: state.email, password: state.password }
+			);
+			setCurrentAccount(account);
+			history.replace('/');
 		} catch (error) {
 			setState({ ...state, isLoading: false, mainError: error.message });
 		}
