@@ -1,10 +1,16 @@
 import { Login } from '.';
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 import { AuthenticationSpy, Helper, ValidationStub } from '@/presentation/tests';
 import { cleanup, render, RenderResult, fireEvent, waitFor } from '@testing-library/react';
+import { InvalidCredentialsError } from '@/domain/errors';
+import { AccountModel } from '@/domain/models';
+import { AccountContext } from '@/presentation/contexts';
+
 import React from 'react';
 import faker from 'faker';
-import { InvalidCredentialsError } from '@/domain/errors';
 
+const history = createMemoryHistory({ initialEntries: ['/login']});
 const simulateValidSubmit = async (
 	sut: RenderResult
 ) => {
@@ -18,21 +24,38 @@ const simulateValidSubmit = async (
 type SutTypes = {
 	sut: RenderResult
 	authenticationSpy: AuthenticationSpy
+	setCurrentAccountMock: (account: AccountModel) => void
 }
 
 const makeSut = (validationError = ''): SutTypes => {
 	const validationStub = new ValidationStub();
 	const authenticationSpy = new AuthenticationSpy();
 	validationStub.error = validationError;
-	const sut = render(<Login validation={validationStub} authentication={authenticationSpy} />);
+	const setCurrentAccountMock = jest.fn();
+
+	const sut = render(
+		<AccountContext.Provider value={{
+			setCurrentAccount: setCurrentAccountMock
+		}}>
+			<Router history={history}>
+				<Login validation={validationStub} authentication={authenticationSpy} />
+			</Router>
+		</AccountContext.Provider>
+	);
+
 	return {
 		sut,
-		authenticationSpy
+		authenticationSpy,
+		setCurrentAccountMock
 	};
 };
 
 describe('Login Page', () => {
 	afterEach(cleanup);
+
+	beforeEach(() => {
+		localStorage.clear();
+	});
 
 	it('Should start with initial State', () => {
 		const validationError = faker.random.words();
@@ -109,5 +132,12 @@ describe('Login Page', () => {
 		const mainError = sut.getByTestId('main-error');
 
 		expect(mainError.textContent).toBe(error.message);
+	});
+
+	it('Should go to principal page', () => {
+		const { sut } = makeSut();
+		simulateValidSubmit(sut);
+		expect(history.length).toBe(1);
+		expect(history.location.pathname).toBe('/');
 	});
 });
