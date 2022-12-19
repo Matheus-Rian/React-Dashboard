@@ -1,4 +1,4 @@
-import { EmailValidation, RequiredFieldValidation } from '@/validation/validators';
+import { EmailValidation, MinLengthValidation, RequiredFieldValidation } from '@/validation/validators';
 import { BuilderValidation } from './validation-builder';
 
 describe('BuilderValidation', () => {
@@ -10,5 +10,10 @@ describe('BuilderValidation', () => {
 	it('Should return EmailValidation', () => {
 		const sut = BuilderValidation.field('any_field').email().build();
 		expect(sut).toEqual([new EmailValidation('any_field')]);
+	});
+
+	it('Should return MinLengthValidation', () => {
+		const sut = BuilderValidation.field('any_field').min(5).build();
+		expect(sut).toEqual([new MinLengthValidation('any_field', 5)]);
 	});
 });
