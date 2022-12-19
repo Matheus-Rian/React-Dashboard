@@ -1,9 +1,14 @@
-import { RequiredFieldValidation } from '@/validation/validators';
+import { EmailValidation, RequiredFieldValidation } from '@/validation/validators';
 import { BuilderValidation } from './validation-builder';
 
 describe('BuilderValidation', () => {
 	it('Should return RequiredFieldValidation', () => {
 		const sut = BuilderValidation.field('any_field').required().build();
 		expect(sut).toEqual([new RequiredFieldValidation('any_field')]);
+	});
+
+	it('Should return EmailValidation', () => {
+		const sut = BuilderValidation.field('any_field').email().build();
+		expect(sut).toEqual([new EmailValidation('any_field')]);
 	});
 });
