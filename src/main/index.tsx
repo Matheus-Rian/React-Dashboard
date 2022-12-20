@@ -1,15 +1,15 @@
-import { Login } from '@/presentation/pages/Login';
 import { theme } from '@/presentation/styles/theme';
+import { ChakraProvider } from '@chakra-ui/react';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { ChakraProvider } from '@chakra-ui/react';
+import Router from './routes/router';
 import '@/presentation/styles/global.scss';
 
 const root = ReactDOM.createRoot(document.getElementById('main'));
 root.render(
 	<React.StrictMode>
 		<ChakraProvider theme={theme}>
-			<Login />
+			<Router />
 		</ChakraProvider>
 	</React.StrictMode>
 );
