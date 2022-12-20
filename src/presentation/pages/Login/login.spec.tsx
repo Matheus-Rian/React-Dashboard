@@ -6,7 +6,6 @@ import { cleanup, render, RenderResult, fireEvent, waitFor } from '@testing-libr
 import { InvalidCredentialsError } from '@/domain/errors';
 import { AccountModel } from '@/domain/models';
 import { AccountContext } from '@/presentation/contexts';
-
 import React from 'react';
 import faker from 'faker';
 
@@ -138,6 +137,6 @@ describe('Login Page', () => {
 		const { sut } = makeSut();
 		simulateValidSubmit(sut);
 		expect(history.length).toBe(1);
-		expect(history.location.pathname).toBe('/');
+		expect(history.location.pathname).toBe('/main');
 	});
 });

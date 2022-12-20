@@ -2,7 +2,7 @@
 import { ButtonCustom, HeadingCustom, InputWrapForm } from '@/presentation/components';
 import { AccountContext, FormContext } from '@/presentation/contexts';
 import { Logo } from '@/presentation/icons/logo';
-import { Flex, FormControl, CircularProgress } from '@chakra-ui/react';
+import { Flex, FormControl, CircularProgress, Text } from '@chakra-ui/react';
 import { Validation } from '../../protocols/validation';
 import React, { useContext, useEffect, useState } from 'react';
 import Styles from './styles.scss';
@@ -10,7 +10,7 @@ import { Authentication } from '../../../domain/usecases/authentication';
 import { useHistory } from 'react-router-dom';
 
 type Props = {
-	validation: Validation
+	validation?: Validation
 	authentication: Authentication
 }
 
@@ -29,16 +29,26 @@ export const Login: React.FC<Props> = ({ validation, authentication }) => {
 	const isFormInvalid = Boolean(state.emailError || state.passwordError);
 	async function handleSubmitData(event: React.FormEvent<HTMLFormElement>): Promise<void> {
 		event.preventDefault();
+
 		try {
-			if (state.isLoading || isFormInvalid) return;
+			if (state.isLoading || isFormInvalid)
+				return;
+
 			setState({ ...state, isLoading: true });
-			const account = await authentication.auth(
-				{ email: state.email, password: state.password }
-			);
+
+			const account = await authentication.auth({
+				email: state.email,
+				password: state.password
+			});
 			setCurrentAccount(account);
-			history.replace('/');
+
+			history.replace('/main');
 		} catch (error) {
-			setState({ ...state, isLoading: false, mainError: error.message });
+			setState({
+				...state,
+				isLoading: false,
+				mainError: error.message
+			});
 		}
 	}
 
@@ -62,7 +72,7 @@ export const Login: React.FC<Props> = ({ validation, authentication }) => {
 
 				<FormContext.Provider value={{ state, setState }}>
 					<form data-testid='form' className={Styles.formContainer} onSubmit={handleSubmitData}>
-						<FormControl>
+						<FormControl isInvalid={isFormInvalid}>
 							<InputWrapForm
 								nameLabel='E-mail'
 								input={{
@@ -70,7 +80,7 @@ export const Login: React.FC<Props> = ({ validation, authentication }) => {
 									placeholder: 'Digite seu e-mail',
 									type: 'email'
 								}}
-								messageError='Email is required.'
+								messageError={state.emailError}
 							/>
 							<InputWrapForm
 								nameLabel='Senha'
@@ -79,12 +89,12 @@ export const Login: React.FC<Props> = ({ validation, authentication }) => {
 									placeholder: 'Digite sua senha',
 									type: 'password'
 								}}
-								messageError='Password is required.'
+								messageError={state.passwordError}
 							/>
 						</FormControl>
 
 						{state.isLoading
-							? <CircularProgress data-testid='progress' isIndeterminate color='purple.300' />
+							? <CircularProgress mt='48px' data-testid='progress' isIndeterminate color='purple.300' />
 							: (
 								<ButtonCustom type='submit' disabled={isFormInvalid}>
 									Entrar
@@ -93,7 +103,7 @@ export const Login: React.FC<Props> = ({ validation, authentication }) => {
 						}
 
 						{state.mainError &&
-							<p data-testid='main-error'>{state.mainError}</p>
+							<Text color='red.300' data-testid='main-error'>{state.mainError}</Text>
 						}
 					</form>
 				</FormContext.Provider>
