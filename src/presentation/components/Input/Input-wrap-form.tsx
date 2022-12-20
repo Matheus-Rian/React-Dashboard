@@ -30,9 +30,7 @@ export const InputWrapForm: React.FC<Props> = ({ input, nameLabel, messageError 
 				data-status={state[errorName] ? 'invalid' : 'valid'}
 				title={state[errorName]}
 			>
-				{ state[errorName] &&
-					<FormErrorMessage>{state[errorName]}</FormErrorMessage>
-				}
+				<FormErrorMessage>{messageError}</FormErrorMessage>
 			</span>
 		</>
 	);
