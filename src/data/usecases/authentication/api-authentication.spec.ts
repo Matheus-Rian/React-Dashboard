@@ -74,11 +74,11 @@ describe('ApiAuthentication', () => {
 	});
 
 
-	it('Should return AccountModel if HttpPostClient returns 200', async () => {
+	it('Should return AccountModel if HttpPostClient returns 201', async () => {
 		const { sut, httpPostClientSpy } = makeSut();
 		const httpResult = mockAccount();
 		httpPostClientSpy.response = {
-			statusCode: HttpStatusCode.ok,
+			statusCode: HttpStatusCode.created,
 			body: httpResult
 		};
 		const account = await sut.auth(mockAuthentication());
