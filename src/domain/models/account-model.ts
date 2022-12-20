@@ -1,5 +1,3 @@
 export type AccountModel = {
-	username: string,
-  name: string,
-  avatar: string
+	'access-token': string
 }

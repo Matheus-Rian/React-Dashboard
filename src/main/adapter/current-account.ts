@@ -3,7 +3,7 @@ import { AccountModel } from '@/domain/models';
 import { makeLocalStorageAdapter } from  '../factories/cache/local-storage-factory';
 
 export const setCurrentAccountAdapter = (account: AccountModel): void => {
-	if (!account?.name) {
+	if (!account?.['access-token']) {
 		throw new UnexpectedError();
 	}
 
